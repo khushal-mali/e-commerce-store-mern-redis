@@ -5,6 +5,6 @@ export const getAllProducts = async (req, res) => {
     const products = await Product.find({});
     res.status(201).json({ products });
   } catch (error) {
-    console.log(error.message);
+    console.log(`[fileName: 'product.controller', Line Number: '8']`, error.message);
   }
 };
