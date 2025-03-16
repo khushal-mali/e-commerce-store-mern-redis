@@ -2,15 +2,14 @@
   "name": "e-commerce-store-mern-redis",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
-  "main": "backend/server.js",
+  "main": "index.js",
   "scripts": {
-    "dev": "nodemon backend/server.js",
-    "start": "node backend/server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.6.0",
