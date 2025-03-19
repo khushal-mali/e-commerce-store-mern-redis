@@ -32,7 +32,7 @@ export const getFeaturedProducts = async (req, res) => {
     return res.status(201).json(featuredProducts);
   } catch (error) {
     console.log(`[fileName: 'product.controller', Line Number: '34']`, error.message);
-    return res.status(500).json({ message: "Error fetching featured products." });
+    return res.status(500).json({ message: "Error fetching featured products.", error });
   }
 };
 
@@ -57,7 +57,7 @@ export const createProduct = async (req, res) => {
     return res.status(201).json(product);
   } catch (error) {
     console.log(`[fileName: 'product.controller', Line Number: '59']`, error.message);
-    return res.status(500).json({ message: "Error creating product." });
+    return res.status(500).json({ message: "Error creating product.", error });
   }
 };
 
@@ -83,6 +83,77 @@ export const deleteProduct = async (req, res) => {
     return res.status(201).json({ message: "Product deleted successfully." });
   } catch (error) {
     console.log(`[fileName: 'product.controller', Line Number: '85']`, error.message);
-    return res.status(500).json({ message: "Error deleting product." });
+    return res.status(500).json({ message: "Error deleting product.", error });
+  }
+};
+
+export const getRecommendedProducts = async (req, res) => {
+  try {
+    const products = await Product.aggregate([
+      {
+        $sample: { size: 3 },
+      },
+      {
+        $project: {
+          id: 1,
+          name: 1,
+          description: 1,
+          image: 1,
+          price: 1,
+          type: 1,
+        },
+      },
+    ]);
+
+    return res.status(201).json(products);
+  } catch (error) {
+    console.log(`[fileName: 'product.controller', Line Number: '110']`, error.message);
+    return res
+      .status(500)
+      .json({ message: "Error while fetching recommended products.", error });
+  }
+};
+
+export const getProductsByCategory = async (req, res) => {
+  const { category } = req.params;
+
+  try {
+    const products = await Product.find({ type: category });
+  } catch (error) {
+    console.log(`[fileName: 'product.controller', Line Number: '123']`, error.message);
+    return res
+      .status(500)
+      .json({ message: "Error while fetching products by category", error });
+  }
+};
+
+export const toggleFeaturedProduct = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product Not Found." });
+    }
+
+    product.isFeatured = !product.isFeatured;
+    const updatedProduct = await product.save();
+
+    await updateFeaturedProductsCache();
+    return res.status(201).json(updatedProduct);
+  } catch (error) {
+    console.log(`[fileName: 'product.controller', Line Number: '146']`, error.message);
+    return res.status(500).json({ message: "Error toggling featured product.", error });
+  }
+};
+
+export const updateFeaturedProductsCache = async () => {
+  try {
+    const featuredProducts = await Product.find({ isFeatured: true }).lean();
+    await redis.set("featured_products", JSON.stringify(featuredProducts));
+  } catch (error) {
+    console.log(`[fileName: 'product.controller', Line Number: '156']`, error.message);
+    return res.status(500).json({ message: "Error toggling featured product.", error });
   }
 };
