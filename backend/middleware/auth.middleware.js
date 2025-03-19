@@ -28,7 +28,7 @@ export const protectedRoute = async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log(`[fileName: 'auth.middleware', Line Number: '22']`, error.message);
+    console.log(`[fileName: 'auth.middleware', Line Number: '31']`, error.message);
     return res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
