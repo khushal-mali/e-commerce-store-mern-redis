@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 // route imports
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/product.routes.js";
+import cartRoutes from "./routes/cart.routes.js";
+import couponRoutes from "./routes/coupon.routes.js";
 
 // DB import
 import { connectDB } from "./lib/db.js";
@@ -20,6 +22,8 @@ app.use(cookieParser());
 // manage routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/coupons", couponRoutes);
 
 app.listen(PORT, () => {
   console.log(`server running on server http://localhost:${PORT}`);
