@@ -149,7 +149,12 @@ export const refreshAccessToken = async (req, res) => {
   }
 };
 
-// TODO: implement get Profile
 export const getProfile = async (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
+  const user = req.user;
+  try {
+    return res.status(200).json(user);
+  } catch (error) {
+    console.log(`[fileName: 'auth.controller', Line Number: '157']`, error.message);
+    return res.status(500).json({ message: error.message, error });
+  }
 };
