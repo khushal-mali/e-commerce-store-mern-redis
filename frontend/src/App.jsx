@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import { useUserStore } from "./stores/useUserStore";
+import AdminPage from "./pages/AdminPage";
 
 const App = () => {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -36,6 +37,16 @@ const App = () => {
           <Route
             path="/login"
             element={!user ? <LoginPage /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/secret-dashboard"
+            element={
+              user?.role === "admin" ? (
+                <AdminPage />
+              ) : (
+                <Navigate to={"/login"} />
+              )
+            }
           />
         </Routes>
       </div>
