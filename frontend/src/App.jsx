@@ -1,20 +1,27 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import LoadingSpinner from "./components/LoadingSpinner";
+import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-import Navbar from "./components/Navbar";
+import { useUserStore } from "./stores/useUserStore";
 
 const App = () => {
+  const { user, checkAuth, checkingAuth } = useUserStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (checkingAuth) return <LoadingSpinner />;
+
   return (
-    <div className="relative min-h-screen bg-gray-900 text-white overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden bg-gray-900 text-white">
       {/* Background gradient */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0">
-          <div
-            className="absolute w-full h-full top-0 left-1/2 -translate-x-1/2
-           bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.3)_0%,rgba(10,80,60,0.2)_45%,rgba(0,0,0,0.1)_100%)]"
-          />
+          <div className="absolute top-0 left-1/2 h-full w-full -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.3)_0%,rgba(10,80,60,0.2)_45%,rgba(0,0,0,0.1)_100%)]" />
         </div>
       </div>
 
@@ -22,8 +29,14 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/signup"
+            element={!user ? <SignupPage /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/login"
+            element={!user ? <LoginPage /> : <Navigate to={"/"} />}
+          />
         </Routes>
       </div>
     </div>
