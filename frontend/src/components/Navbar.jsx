@@ -8,8 +8,6 @@ const Navbar = () => {
 
   const isAdmin = user?.role === "admin";
 
-  console.log(isAdmin);
-
   return (
     <header className="bg-opacity-90 fixed top-0 left-0 z-40 w-full border-b border-emerald-800 bg-gray-900 shadow-lg backdrop-blur-md transition-all duration-300">
       <div className="container mx-auto px-4 py-3">
@@ -47,7 +45,7 @@ const Navbar = () => {
 
             {isAdmin && (
               <Link
-                to={"/admin"}
+                to={"/secret-dashboard"}
                 className="flex items-center rounded-md bg-emerald-700 px-3 py-1 font-medium text-white transition duration-300 ease-in-out hover:bg-emerald-600"
               >
                 <Lock className="mr-1 inline-block" size={18} />
