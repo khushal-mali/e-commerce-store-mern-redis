@@ -50,16 +50,19 @@ export const signUp = async (req, res) => {
     setCookies(res, refreshToken, accessToken);
 
     return res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
+      message: "User created successfully.",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.log(error.message);
     return res
       .status(500)
-      .json({ message: "Error while creating user!", error: error.message });
+      .json({ message: error.message || "Error while creating the User." });
   }
 };
 
@@ -80,10 +83,13 @@ export const login = async (req, res) => {
       await redis.del(`refresh_token:${user._id}`);
 
       return res.status(200).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
+        message: "Logged in successfully.",
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
       });
     } else {
       return res.status(401).json({ message: "Password does not match." });
@@ -96,7 +102,7 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    const refreshToken = res.cookies.refreshToken;
+    const refreshToken = res.cookie.refreshToken;
 
     if (refreshToken) {
       const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
@@ -152,9 +158,9 @@ export const refreshAccessToken = async (req, res) => {
 export const getProfile = async (req, res) => {
   const user = req.user;
   try {
-    return res.status(200).json(user);
+    return res.status(200).json({ user });
   } catch (error) {
-    console.log(`[fileName: 'auth.controller', Line Number: '157']`, error.message);
+    console.log(`[fileName: 'auth.controller', Line Number: '163']`, error.message);
     return res.status(500).json({ message: error.message, error });
   }
 };
