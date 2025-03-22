@@ -5,7 +5,7 @@ import cloudinary from "../lib/cloudinary.js";
 export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({});
-    return res.status(201).json({ products });
+    return res.status(201).json({ message: "Success", products });
   } catch (error) {
     console.log(`[fileName: 'product.controller', Line Number: '10']`, error.message);
     return res.status(500).json({ message: error.message });
@@ -38,7 +38,7 @@ export const getFeaturedProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, description, price, image, type } = req.body;
+    const { name, description, price, image, category } = req.body;
     let cloudinaryResponse = null;
 
     if (image) {
@@ -52,11 +52,12 @@ export const createProduct = async (req, res) => {
       description,
       price,
       image: cloudinaryResponse?.secure_url ? cloudinaryResponse.secure_url : "",
-      type,
+      type: category,
     });
-    return res.status(201).json(product);
+
+    return res.status(201).json({ message: "Product created successfully.", product });
   } catch (error) {
-    console.log(`[fileName: 'product.controller', Line Number: '59']`, error.message);
+    console.log(`[fileName: 'product.controller', Line Number: '60']`, error);
     return res.status(500).json({ message: "Error creating product.", error });
   }
 };
@@ -79,7 +80,7 @@ export const deleteProduct = async (req, res) => {
       }
     }
 
-    await Product.findByIdAndUpdate(req.params.id);
+    await Product.findByIdAndDelete(req.params.id);
     return res.status(201).json({ message: "Product deleted successfully." });
   } catch (error) {
     console.log(`[fileName: 'product.controller', Line Number: '85']`, error.message);
@@ -141,7 +142,7 @@ export const toggleFeaturedProduct = async (req, res) => {
     const updatedProduct = await product.save();
 
     await updateFeaturedProductsCache();
-    return res.status(201).json(updatedProduct);
+    return res.status(201).json({ message: "Product updated.", product: updatedProduct });
   } catch (error) {
     console.log(`[fileName: 'product.controller', Line Number: '146']`, error.message);
     return res.status(500).json({ message: "Error toggling featured product.", error });
