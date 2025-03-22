@@ -18,7 +18,7 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 const app = express();
 
-app.use(express.json()); // Allows you to parse body of the request
+app.use(express.json({ limit: "10mb" })); // Allows you to parse body of the request
 app.use(cookieParser());
 
 // manage routes
