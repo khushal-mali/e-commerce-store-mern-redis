@@ -1,10 +1,14 @@
 import React from "react";
 import { Lock, LogOut, ShoppingCart, UserPlus, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useUserStore } from "../stores/useUserStore";
 
 const Navbar = () => {
-  const user = false;
-  const isAdmin = false;
+  const { user, logout } = useUserStore();
+
+  const isAdmin = user?.role === "admin";
+
+  console.log(isAdmin);
 
   return (
     <header className="bg-opacity-90 fixed top-0 left-0 z-40 w-full border-b border-emerald-800 bg-gray-900 shadow-lg backdrop-blur-md transition-all duration-300">
@@ -52,7 +56,10 @@ const Navbar = () => {
             )}
 
             {user ? (
-              <button className="flex items-center rounded-md bg-gray-700 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-gray-600">
+              <button
+                onClick={logout}
+                className="flex cursor-pointer items-center rounded-md bg-gray-700 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-gray-600"
+              >
                 <LogOut size={18} />
                 <span className="ml-2 hidden sm:inline">Log out</span>
               </button>
@@ -67,7 +74,7 @@ const Navbar = () => {
                 </Link>
 
                 <Link
-                  to={"/signup"}
+                  to={"/login"}
                   className="flex items-center rounded-md bg-gray-600 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-gray-700"
                 >
                   <LogIn className="mr-2" size={18} />
