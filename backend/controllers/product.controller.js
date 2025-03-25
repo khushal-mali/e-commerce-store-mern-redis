@@ -52,7 +52,7 @@ export const createProduct = async (req, res) => {
       description,
       price,
       image: cloudinaryResponse?.secure_url ? cloudinaryResponse.secure_url : "",
-      type: category,
+      category,
     });
 
     return res.status(201).json({ message: "Product created successfully.", product });
@@ -101,7 +101,7 @@ export const getRecommendedProducts = async (req, res) => {
           description: 1,
           image: 1,
           price: 1,
-          type: 1,
+          category: 1,
         },
       },
     ]);
@@ -119,7 +119,8 @@ export const getProductsByCategory = async (req, res) => {
   const { category } = req.params;
 
   try {
-    const products = await Product.find({ type: category });
+    const products = await Product.find({ category });
+    return res.status(201).json({ message: "Success.", products });
   } catch (error) {
     console.log(`[fileName: 'product.controller', Line Number: '123']`, error.message);
     return res
