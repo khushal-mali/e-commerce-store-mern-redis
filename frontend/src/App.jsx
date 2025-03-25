@@ -1,12 +1,16 @@
-import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+
+import React, { useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Navbar from "./components/Navbar";
+
+import AdminPage from "./pages/AdminPage";
+import CategoryPage from "./pages/CategoryPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+
 import { useUserStore } from "./stores/useUserStore";
-import AdminPage from "./pages/AdminPage";
 
 const App = () => {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -48,6 +52,7 @@ const App = () => {
               )
             }
           />
+          <Route path="/category/:category" element={<CategoryPage />} />
         </Routes>
       </div>
     </div>
