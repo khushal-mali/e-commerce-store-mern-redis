@@ -93,4 +93,22 @@ export const useProductStore = create((set, get) => ({
       return toast.error(error.response.data.message || "Failed to toggle.");
     }
   },
+
+  fetchProductsByCategory: async (category) => {
+    set({ loading: true });
+
+    try {
+      const { data } = await axios.get(`/products/category/${category}`);
+      set({ products: data.products, loading: false });
+    } catch (error) {
+      console.log(
+        `[fileName: 'useProductStore', Line Number: '104']`,
+        error.message,
+      );
+      set({ loading: false });
+      return toast.error(
+        error.response.data.message || "Failed to fetch products.",
+      );
+    }
+  },
 }));
