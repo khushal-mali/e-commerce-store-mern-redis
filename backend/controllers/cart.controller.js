@@ -17,7 +17,7 @@ export const addToCart = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "Error while adding product to cart", error: error.message });
+      .json({ message: error.message || "Error while adding product to cart" });
   }
 };
 
@@ -77,20 +77,16 @@ export const getCartProducts = async (req, res) => {
 
     const products = await Product.find({ _id: { $in: req.user.cartItems } });
 
-    console.log(products);
-
     const cartItems = products.map((product) => {
       const item = req.user.cartItems.find((cartItem) => cartItem.id === product.id);
       return { ...product.toJSON(), quantity: item.quantity };
     });
 
-    console.log(cartItems);
-
     return res.status(200).json(cartItems);
   } catch (error) {
-    console.log(`[fileName: 'cart.controller', Line Number: '91']`, error.message);
-    return res
-      .status(500)
-      .json({ message: "Error while fetching cart products", error: error.message });
+    console.log(`[fileName: 'cart.controller', Line Number: '87']`, error.message);
+    return res.status(500).json({
+      message: error.message || "Error while fetching cart products",
+    });
   }
 };

@@ -17,10 +17,11 @@ export const createCheckoutSession = async (req, res) => {
 
       return {
         price_data: {
-          current: "usd",
-          product_data: { name: product.name, image: [product.image] },
+          currency: "usd",
+          product_data: { name: product.name, images: [product.image] },
           unit_amount: amount,
         },
+        quantity: product.quantity || 1,
       };
     });
 
@@ -38,7 +39,7 @@ export const createCheckoutSession = async (req, res) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `${process.env.CLIENT_URL}/purchase-success?session_id=${CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
       discounts: coupon
         ? [
@@ -91,15 +92,15 @@ export const checkoutSuccess = async (req, res) => {
       // create a new order
       const products = JSON.parse(session.metadata.products);
       const newOrder = await Order.create({
-        products: products.map((p) => ({
-          product: p._id,
-          quantity: p.quantity,
-          price: p.price,
+        products: products.map((product) => ({
+          product: product.id,
+          quantity: product.quantity,
+          price: product.price,
         })),
         user: session.metadata.userId,
         stripeSessionId: sessionId,
         totalAmount: session.amount_total / 100, // convert from cents to dollars
-        pay,
+        // pay,
       });
 
       await newOrder.save();
