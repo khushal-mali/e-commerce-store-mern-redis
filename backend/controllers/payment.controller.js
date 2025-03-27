@@ -66,7 +66,7 @@ export const createCheckoutSession = async (req, res) => {
     }
     return res.status(200).json({ id: session.id, totalAmount: totalAmount / 100 });
   } catch (error) {
-    console.log(`[fileName: 'payment.controller', Line Number: '67']`, error.message);
+    console.log(`[fileName: 'payment.controller', Line Number: '69']`, error.message);
     return res.status(500).json({
       message: "Unable to create checkout session",
       error: error.message,
@@ -77,6 +77,9 @@ export const createCheckoutSession = async (req, res) => {
 export const checkoutSuccess = async (req, res) => {
   try {
     const { sessionId } = req.body;
+
+    console.log("sessionId", sessionId);
+
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     if (session.payment_status === "paid") {
       if (session.metadata.couponCode) {
@@ -88,22 +91,24 @@ export const checkoutSuccess = async (req, res) => {
           { isActive: false }
         );
       }
-
+      console.log(session);
       // create a new order
-      const products = JSON.parse(session.metadata.products);
-      const newOrder = await Order.create({
+      const products = await JSON.parse(session.metadata.products);
+      const newOrder = new Order({
+        user: session.metadata.userId,
         products: products.map((product) => ({
           product: product.id,
           quantity: product.quantity,
           price: product.price,
         })),
-        user: session.metadata.userId,
+        totalAmount: session.amount_total / 100, // convert from cents to dollars,
         stripeSessionId: sessionId,
-        totalAmount: session.amount_total / 100, // convert from cents to dollars
-        // pay,
       });
 
+      console.log(newOrder);
+
       await newOrder.save();
+
       return res.status(200).json({
         success: true,
         message: "Payment successfull, order created, and coupon deactivated if used.",
@@ -111,10 +116,10 @@ export const checkoutSuccess = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(`[fileName: 'payment.routes', Line Number: '48']`, error.message);
+    console.log(`[fileName: 'payment.routes', Line Number: '117']`, error);
     return res
       .status(500)
-      .json({ message: "Error processing successfull checkout", error: error.message });
+      .json({ message: "Error processing successfull checkout", error });
   }
 };
 
@@ -127,6 +132,8 @@ async function createStripeCoupon(discountPercentage) {
 }
 
 async function createNewCoupon(userId) {
+  await Coupon.findOneAndDelete({ userId });
+
   const newCoupon = new Coupon({
     code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
     discountPercentage: 10,
