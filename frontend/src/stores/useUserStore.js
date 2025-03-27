@@ -75,7 +75,7 @@ export const useUserStore = create((set, get) => ({
       set({ user: data.user, checkingAuth: false });
     } catch (error) {
       console.log(
-        `[fileName: 'useUserStore', Line Number: '78']`,
+        `[fileName: 'useUserStore', Line Number: '77']`,
         error.message,
       );
       set({ checkingAuth: false, user: null });
