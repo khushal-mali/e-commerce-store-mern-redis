@@ -94,6 +94,20 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
+  fetchFeaturedProducts: async () => {
+    set({ loading: true });
+    try {
+      const response = await axios.get("/products/featured");
+      set({ products: response.data, loading: false });
+    } catch (error) {
+      set({ error: "Failed to fetch products", loading: false });
+      console.log(`[fileName: 'useProductStore', Line Number: '104']`, error);
+      return toast.error(
+        error.response.data.message || "Failed to fetch products.",
+      );
+    }
+  },
+
   fetchProductsByCategory: async (category) => {
     set({ loading: true });
 
@@ -102,7 +116,7 @@ export const useProductStore = create((set, get) => ({
       set({ products: data.products, loading: false });
     } catch (error) {
       console.log(
-        `[fileName: 'useProductStore', Line Number: '104']`,
+        `[fileName: 'useProductStore', Line Number: '118']`,
         error.message,
       );
       set({ loading: false });
