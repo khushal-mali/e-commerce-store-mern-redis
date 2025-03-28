@@ -66,7 +66,7 @@ const ProductsList = () => {
                     />
                   </div>
                   <div className="ml-4">
-                    <div className="text-sm font-medium text-white">
+                    <div className="text-sm font-medium text-wrap text-white">
                       {product.name}
                     </div>
                   </div>
@@ -78,7 +78,7 @@ const ProductsList = () => {
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-300">{product.type}</div>
+                <div className="text-sm text-gray-300">{product.category}</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <Tooltip text="Toggle Featured product">
