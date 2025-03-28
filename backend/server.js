@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
 import path from "path";
+import morgan from "morgan";
 
 // route imports
 import analyticsRoutes from "./routes/analytics.routes.js";
@@ -20,6 +21,9 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 const __dirname = path.resolve();
+
+// Use Morgan middleware with the 'dev' format (good for development)
+app.use(morgan("dev"));
 
 app.use(express.json({ limit: "10mb" })); // Allows you to parse body of the request
 app.use(cookieParser());
