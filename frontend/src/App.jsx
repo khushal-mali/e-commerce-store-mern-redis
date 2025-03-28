@@ -4,17 +4,28 @@ import React, { useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Navbar from "./components/Navbar";
 
-import AdminPage from "./pages/AdminPage";
-import CategoryPage from "./pages/CategoryPage";
+// import AdminPage from "./pages/AdminPage";
+// import CategoryPage from "./pages/CategoryPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 
-import { useUserStore } from "./stores/useUserStore";
-import CartPage from "./pages/CartPage";
+// import CartPage from "./pages/CartPage";
+// import PurchaseCancelPage from "./pages/PurchaseCancelPage";
+// import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
 import { useCartStore } from "./stores/useCartStore";
-import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
-import PurchaseCancelPage from "./pages/PurchaseCancelPage";
+import { useUserStore } from "./stores/useUserStore";
+
+// Lazy-loaded route
+const CartPage = React.lazy(() => import("./pages/CartPage"));
+const PurchaseCancelPage = React.lazy(
+  () => import("./pages/PurchaseCancelPage"),
+);
+const PurchaseSuccessPage = React.lazy(
+  () => import("./pages/PurchaseSuccessPage"),
+);
+const CategoryPage = React.lazy(() => import("./pages/CategoryPage"));
+const AdminPage = React.lazy(() => import("./pages/AdminPage"));
 
 const App = () => {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -57,26 +68,57 @@ const App = () => {
             path="/secret-dashboard"
             element={
               user?.role === "admin" ? (
-                <AdminPage />
+                <React.Suspense fallback={<LoadingSpinner />}>
+                  <AdminPage />
+                </React.Suspense>
               ) : (
                 <Navigate to={"/login"} />
               )
             }
           />
-          <Route path="/category/:category" element={<CategoryPage />} />
+          <Route
+            path="/category/:category"
+            element={
+              <React.Suspense fallback={<LoadingSpinner />}>
+                <CategoryPage />
+              </React.Suspense>
+            }
+          />
           <Route
             path="/cart"
-            element={user ? <CartPage /> : <Navigate to={"/login"} />}
+            element={
+              user ? (
+                <React.Suspense fallback={<LoadingSpinner />}>
+                  <CartPage />
+                </React.Suspense>
+              ) : (
+                <Navigate to={"/login"} />
+              )
+            }
           />
           <Route
             path="/purchase-success"
             element={
-              user ? <PurchaseSuccessPage /> : <Navigate to={"/login"} />
+              user ? (
+                <React.Suspense fallback={<LoadingSpinner />}>
+                  <PurchaseSuccessPage />
+                </React.Suspense>
+              ) : (
+                <Navigate to={"/login"} />
+              )
             }
           />
           <Route
             path="/purchase-cancel"
-            element={user ? <PurchaseCancelPage /> : <Navigate to={"/login"} />}
+            element={
+              user ? (
+                <React.Suspense fallback={<LoadingSpinner />}>
+                  <PurchaseCancelPage />
+                </React.Suspense>
+              ) : (
+                <Navigate to={"/login"} />
+              )
+            }
           />
         </Routes>
       </div>
